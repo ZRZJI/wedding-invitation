@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>张睿 & 赵嘉妮 · 答谢宴邀请函</title>
+
+    <!-- Open Graph → 微信分享气泡卡片兜底 -->
+    <meta property="og:title" content="张睿 & 赵嘉妮 · 答谢宴邀请函">
+    <meta property="og:description" content="人生旅途，幸有你同行。诚邀您参加我们的答谢宴。">
+    <meta property="og:image" content="images/4H9A6090.jpg">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="张睿 & 赵嘉妮 · 答谢宴邀请函">
+    <meta name="twitter:description" content="人生旅途，幸有你同行。诚邀您参加我们的答谢宴。">
+    <meta name="twitter:image" content="images/4H9A6090.jpg">
+
+    <!-- 微信 JS-SDK -->
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+
+    <style>
+        /* ===== 全局变量 & 重置 ===== */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f5f5;
+            --gray: #999;
+            --light-gray: #bbb;
+            --gold: #c9a96e;
+            --gold-dim: rgba(201,169,110,0.4);
+            --font-serif: 'Noto Serif SC', 'STSong', 'SimSun', 'Georgia', serif;
+            --font-en: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+        body {
+            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== 加载动画 ===== */
+        #loader {
+            position: fixed; inset:0; z-index:9999; background: var(--black);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #loader.hidden { opacity:0; visibility:hidden; pointer-events:none; }
+        #loader .ring {
+            width:50px; height:50px;
+            border:2px solid rgba(201,169,110,0.2); border-top-color: var(--gold);
+            border-radius:50%; animation: spin 1s linear infinite;
+        }
+        #loader p {
+            margin-top:20px; font-family: var(--font-en);
+            color:var(--gold); letter-spacing:4px; font-size:13px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== 音乐按钮 ===== */
+        #music-btn {
+            position: fixed; top:20px; right:20px; z-index:1000;
+            width:40px; height:40px; border-radius:50%;
+            background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
+            border:1px solid rgba(255,255,255,0.12);
+            display:flex; align-items:center; justify-content:center;
+            cursor:pointer; transition: all 0.3s ease;
+        }
+        #music-btn:hover { background: rgba(255,255,255,0.18); }
+        #music-btn svg { width:20px; height:20px; fill: var(--gold); }
+        #music-btn.playing svg { animation: musicSpin 3s linear infinite; }
+        @keyframes musicSpin { to { transform: rotate(360deg); } }
+
+        /* ===== 导航圆点 ===== */
+        #nav-dots {
+            position: fixed; right:16px; top:50%; transform: translateY(-50%);
+            z-index:1000; display:flex; flex-direction:column; gap:12px;
+        }
+        .nav-dot {
+            width:6px; height:6px; border-radius:50%;
+            background: rgba(255,255,255,0.2); border:none; padding:0;
+            cursor:pointer; transition: all 0.3s ease;
+        }
+        .nav-dot.active { background: var(--gold); transform: scale(1.6); }
+
+        /* ===== 页面通用 ===== */
+        .section {
+            min-height:100vh; display:flex; align-items:center; justify-content:center;
+            position:relative; overflow:hidden; padding:60px 20px;
+            scroll-snap-align: start;
+        }
+        .section-label {
+            font-family: var(--font-en);
+            font-size:11px; letter-spacing:5px; text-transform:uppercase;
+            color:var(--gold); margin-bottom:12px;
+        }
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: clamp(26px,6vw,42px); font-weight:700;
+            letter-spacing:6px; margin-bottom:16px;
+        }
+        .divider {
+            width:50px; height:1px; background:var(--gold);
+            margin:20px auto;
+        }
+
+        /* ===== 动画工具类 ===== */
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(30px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+        .fade-in {
+            opacity:0; transform:translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .fade-in.visible { opacity:1; transform:translateY(0); }
+
+        /* ========================================
+           第1屏：封面
+           ======================================== */
+        #sec-cover { background: var(--black); flex-direction:column; text-align:center; padding-bottom:80px; }
+        #sec-cover .cover-bg {
+            position:absolute; inset:0;
+            background: url('images/4H9A6090.jpg') center/cover no-repeat;
+            opacity:0.35; filter: grayscale(60%) brightness(0.55);
+        }
+        #sec-cover .cover-overlay {
+            position:absolute; inset:0;
+            background: linear-gradient(180deg, rgba(10,10,10,0.2) 0%, rgba(10,10,10,0.85) 100%);
+        }
+        #sec-cover .cover-content { position:relative; z-index:2; }
+        .cover-tag {
+            font-family: var(--font-en);
+            font-size: clamp(12px,2.5vw,16px); letter-spacing:6px;
+            text-transform:uppercase; color:var(--gold);
+            margin-bottom:18px;
+        }
+        .cover-names {
+            display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+            gap:8px; margin-bottom:18px;
+        }
+        .name-unit {
+            font-family: var(--font-serif);
+            font-size: clamp(30px,8vw,38px); font-weight:700;
+            letter-spacing:6px; white-space:nowrap;
+        }
+        .names-sep {
+            font-family: var(--font-en);
+            font-size: clamp(20px,5vw,28px);
+            color:var(--gold); font-style:italic;
+        }
+        .cover-subtitle {
+            font-size: clamp(13px,2.5vw,15px); letter-spacing:4px;
+            color:var(--gray); margin-bottom:40px;
+        }
+        .scroll-hint {
+            position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+            display:flex; flex-direction:column; align-items:center; gap:8px;
+        }
+        .scroll-hint span {
+            font-size:10px; letter-spacing:3px; color:var(--gray);
+        }
+        .scroll-hint .arrow {
+            width:18px; height:18px;
+            border-right:1px solid var(--gold); border-bottom:1px solid var(--gold);
+            transform: rotate(45deg); animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%,20%,50%,80%,100% { transform: rotate(45deg) translateY(0); }
+            40% { transform: rotate(45deg) translateY(6px); }
+            60% { transform: rotate(45deg) translateY(3px); }
+        }
+
+        /* ========================================
+           第2屏：出席回执 (嵌入式表单 / WPS 兜底)
+           ======================================== */
+        #sec-rsvp { background:#111; flex-direction:column; }
+        #sec-rsvp .rsvp-wrapper {
+            width:100%; max-width:420px; padding:0 20px; text-align:center;
+        }
+        #sec-rsvp .rsvp-desc {
+            font-size:13px; color:var(--gray); letter-spacing:1px;
+            line-height:2; margin-bottom:32px;
+        }
+        .btn-wps {
+            display:inline-block; padding:16px 52px;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size:14px; letter-spacing:4px;
+            color:var(--black); background:var(--gold);
+            border:none; cursor:pointer; text-decoration:none;
+            transition: all 0.3s ease;
+        }
+        .btn-wps:hover { background:#b8944f; }
+        .form-note {
+            font-size:11px; color:var(--gray); text-align:center;
+            margin-top:24px; letter-spacing:1px; line-height:1.8;
+        }
+
+        /* 嵌入式表单容器 */
+        .form-embed-wrapper {
+            width:100%; max-width:420px; margin:0 auto;
+            background: rgba(255,255,255,0.04);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:8px; overflow:hidden;
+            position:relative; z-index:2;
+        }
+        .form-embed-wrapper iframe {
+            width:100%; height:480px; border:none;
+            display:block; background:#fff;
+        }
+        /* 腾讯文档表单自适应 */
+        .form-embed-wrapper.form-tdocs {
+            background: #fff; border: none; border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+        .form-embed-wrapper.form-tdocs iframe {
+            height:520px;
+        }
+
+        /* 向下引导 */
+        .rsvp-scroll-hint {
+            display:flex; flex-direction:column; align-items:center;
+            margin-top:32px; opacity:0.55;
+        }
+        .rsvp-scroll-hint span {
+            font-family: var(--font-serif);
+            font-size:10px; letter-spacing:2px; color:var(--gray);
+        }
+        .rsvp-scroll-hint .arrow {
+            width:12px; height:12px;
+            border-right:1px solid var(--gold); border-bottom:1px solid var(--gold);
+            transform: rotate(45deg); margin-top:8px;
+            animation: float-soft 2s infinite;
+        }
+        @keyframes float-soft {
+            0%,100% { transform: rotate(45deg) translateY(0); }
+            50% { transform: rotate(45deg) translateY(4px); }
+        }
+
+        /* ========================================
+           第3屏：寄语
+           ======================================== */
+        #sec-message { background: var(--black); flex-direction:column; }
+        #sec-message .msg-content {
+            text-align:center; max-width:500px;
+        }
+        .love-story {
+            font-size:14px; line-height:2.2; color:var(--gray); letter-spacing:1px;
+            margin-top:16px;
+        }
+
+        /* ========================================
+           第4屏：相册 — 三章节排版
+           ======================================== */
+        #sec-gallery { background: var(--black); flex-direction:column; padding:60px 0; }
+        .gallery-wrap {
+            width:100%; max-width:900px; padding:0 16px;
+        }
+        .gallery-chapter {
+            margin-bottom:50px;
+        }
+        .gallery-chapter:last-child { margin-bottom:0; }
+
+        /* 章节标签 */
+        .chapter-label {
+            text-align:center; margin-bottom:24px;
+            display:flex; align-items:center; gap:16px;
+        }
+        .chapter-label .line {
+            flex:1; height:1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+        }
+        .chapter-label .cn {
+            font-family: var(--font-serif);
+            font-size:14px; letter-spacing:8px; color:var(--gold); white-space:nowrap;
+        }
+        .chapter-label .en {
+            font-family: var(--font-en);
+            font-size:10px; letter-spacing:3px; color:var(--gray);
+            text-transform:uppercase; margin-left:6px;
+        }
+
+        /* 全幅单图 */
+        .gallery-full {
+            position:relative; overflow:hidden; cursor:pointer;
+            border-radius:2px;
+        }
+        .gallery-full img {
+            width:100%; height:auto; display:block;
+            filter: grayscale(40%) brightness(0.9);
+            transition: all 0.6s ease;
+        }
+        .gallery-full:hover img { filter: grayscale(0%) brightness(1); transform:scale(1.03); }
+
+        /* 二联图：左大右小 */
+        .gallery-duo {
+            display:grid; grid-template-columns:1.6fr 1fr; gap:4px;
+            margin-top:4px;
+        }
+        .gallery-duo .gallery-img-wrap {
+            position:relative; overflow:hidden; cursor:pointer;
+            border-radius:2px;
+        }
+        .gallery-duo .gallery-img-wrap img {
+            width:100%; height:100%; object-fit:cover;
+            filter: grayscale(40%) brightness(0.9);
+            transition: all 0.6s ease;
+        }
+        .gallery-duo .gallery-img-wrap:hover img {
+            filter: grayscale(0%) brightness(1); transform:scale(1.04);
+        }
+
+        /* 二联图反转：右大左小 */
+        .gallery-duo-reverse {
+            display:grid; grid-template-columns:1fr 1.6fr; gap:4px;
+            margin-top:4px;
+        }
+        .gallery-duo-reverse .gallery-img-wrap {
+            position:relative; overflow:hidden; cursor:pointer;
+            border-radius:2px;
+        }
+        .gallery-duo-reverse .gallery-img-wrap img {
+            width:100%; height:100%; object-fit:cover;
+            filter: grayscale(40%) brightness(0.9);
+            transition: all 0.6s ease;
+        }
+        .gallery-duo-reverse .gallery-img-wrap:hover img {
+            filter: grayscale(0%) brightness(1); transform:scale(1.04);
+        }
+
+        /* 诗句隔断 */
+        .gallery-interlude {
+            text-align:center; padding:40px 20px; margin:20px 0;
+        }
+        .gallery-interlude .poem {
+            font-family: var(--font-serif);
+            font-size:14px; letter-spacing:4px; color:var(--gray);
+            line-height:2.2;
+        }
+
+        /* ========================================
+           第5屏：结语（含详情卡片）
+           ======================================== */
+        #sec-ending {
+            background: var(--black); flex-direction:column;
+            position:relative; text-align:center;
+            min-height:100vh; justify-content:center;
+        }
+        #sec-ending .ending-bg {
+            position:absolute; inset:0;
+        }
+        #sec-ending .ending-bg img {
+            width:100%; height:100%; object-fit:cover;
+            filter: grayscale(60%) brightness(0.5);
+        }
+        #sec-ending .ending-overlay {
+            position:absolute; inset:0;
+            background: linear-gradient(180deg, rgba(10,10,10,0.4) 0%, rgba(10,10,10,0.85) 100%);
+        }
+
+        /* 毛玻璃详情卡片 */
+        .venue-card {
+            position:relative; z-index:2;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:12px; padding:36px 32px;
+            max-width:420px; width:100%; margin-bottom:40px;
+        }
+        .venue-card .card-title {
+            font-family: var(--font-serif);
+            font-size: clamp(18px,4vw,24px); letter-spacing:6px;
+            margin-bottom:24px;
+        }
+        .venue-card .info-row {
+            display:grid; grid-template-columns:60px 1fr;
+            gap:12px 16px; text-align:left;
+            margin-bottom:10px;
+        }
+        .venue-card .info-row:last-child { margin-bottom:0; }
+        .venue-card .info-label {
+            font-family: var(--font-en);
+            font-size:10px; letter-spacing:2px; text-transform:uppercase;
+            color:var(--gold); text-align:right;
+        }
+        .venue-card .info-value {
+            font-family: var(--font-serif);
+            font-size:15px; letter-spacing:2px; color:var(--white);
+        }
+        .venue-card .divider-sm {
+            width:30px; height:1px; background:var(--gold-dim);
+            margin:24px auto;
+        }
+
+        /* 结束文字 */
+        .ending-content { position:relative; z-index:2; }
+        .ending-text {
+            font-family: var(--font-en);
+            font-size: clamp(14px,3vw,20px); font-style:italic;
+            color:var(--gold); letter-spacing:2px; line-height:1.8;
+        }
+        .ending-names {
+            font-family: var(--font-serif);
+            font-size: clamp(20px,4vw,32px); letter-spacing:6px;
+            margin-top:24px;
+        }
+        .ending-date {
+            font-size:12px; letter-spacing:4px; color:var(--gray);
+            margin-top:20px;
+        }
+
+        /* ========================================
+           图片弹窗
+           ======================================== */
+        .modal-overlay {
+            position:fixed; inset:0; z-index:9998;
+            background:rgba(0,0,0,0.95);
+            display:flex; align-items:center; justify-content:center;
+            opacity:0; visibility:hidden; transition: all 0.4s ease;
+        }
+        .modal-overlay.active { opacity:1; visibility:visible; }
+        .modal-img {
+            max-width:92vw; max-height:92vh; object-fit:contain;
+            filter:grayscale(0%) !important;
+        }
+
+        /* ========================================
+           Toast 提示
+           ======================================== */
+        .toast {
+            position:fixed; bottom:50px; left:50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(201,169,110,0.95); color:var(--black);
+            padding:12px 32px; font-size:12px; letter-spacing:2px;
+            opacity:0; transition: all 0.4s ease; z-index:9999;
+            pointer-events:none; border-radius:4px;
+        }
+        .toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+
+        /* ========================================
+           响应式
+           ======================================== */
+        @media (max-width:768px) {
+            .section { padding:40px 16px; }
+            .venue-card { padding:28px 20px; max-width:340px; }
+            .gallery-duo, .gallery-duo-reverse { grid-template-columns:1fr 1fr; gap:3px; }
+            .chapter-label .cn { font-size:13px; letter-spacing:6px; }
+            #nav-dots { right:10px; }
+            .form-embed-wrapper { max-width:100%; }
+            .form-embed-wrapper iframe { height:440px; }
+            .form-embed-wrapper.form-tdocs iframe { height:480px; }
+        }
+        @media (max-width:480px) {
+            .gallery-duo, .gallery-duo-reverse { grid-template-columns:1fr; }
+            .venue-card { padding:24px 16px; }
+            .venue-card .info-row { grid-template-columns:50px 1fr; gap:8px 10px; }
+            .venue-card .info-label { font-size:9px; }
+            .venue-card .info-value { font-size:13px; }
+            .btn-wps { padding:14px 36px; font-size:13px; letter-spacing:3px; }
+            .form-embed-wrapper iframe { height:400px; }
+            .form-embed-wrapper.form-tdocs iframe { height:440px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 加载动画 -->
+<div id="loader">
+    <div class="ring"></div>
+    <p>LOADING</p>
+</div>
+
+<!-- 音乐按钮 -->
+<div id="music-btn" class="playing" title="背景音乐">
+    <svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+</div>
+
+<!-- 导航圆点 (5屏) -->
+<div id="nav-dots">
+    <button class="nav-dot active" data-target="0" title="封面"></button>
+    <button class="nav-dot" data-target="1" title="出席回执"></button>
+    <button class="nav-dot" data-target="2" title="寄语"></button>
+    <button class="nav-dot" data-target="3" title="相册"></button>
+    <button class="nav-dot" data-target="4" title="结语"></button>
+</div>
+
+<!-- ==================== 第1屏：封面 ==================== -->
+<section id="sec-cover" class="section">
+    <div class="cover-bg"></div>
+    <div class="cover-overlay"></div>
+    <div class="cover-content fade-in">
+        <p class="cover-tag">Thanksgiving · 答谢宴</p>
+        <div class="cover-names">
+            <span class="name-unit" id="coverGroom">张睿</span>
+            <span class="names-sep">&amp;</span>
+            <span class="name-unit" id="coverBride">赵嘉妮</span>
+        </div>
+        <p class="cover-subtitle">Thank You for Being Here</p>
+    </div>
+    <div class="scroll-hint">
+        <span>向下滑动</span>
+        <div class="arrow"></div>
+    </div>
+</section>
+
+<!-- ==================== 第2屏：出席回执 ==================== -->
+<section id="sec-rsvp" class="section">
+    <div class="fade-in" style="text-align:center; margin-bottom:24px;">
+        <p class="section-label">RSVP</p>
+        <h2 class="section-title">出 席 回 执</h2>
+        <div class="divider"></div>
+    </div>
+
+    <!-- 模式A：嵌入式表单（优先，当 SETTINGS_FormEmbedURL 有值时显示） -->
+    <div class="form-embed-wrapper form-tdocs fade-in" id="rsvpEmbed" style="display:none;">
+        <iframe id="rsvpIframe" src="" allow="geolocation; microphone; camera"></iframe>
+    </div>
+
+    <!-- 模式B：WPS 跳转按钮（兜底，当 SETTINGS_FormEmbedURL 为空时显示） -->
+    <div class="rsvp-wrapper fade-in" id="rsvpFallback" style="display:none;">
+        <p class="rsvp-desc">
+            如您能出席我们的答谢宴<br>
+            请点击下方按钮填写出席信息<br>
+            以便我们提前做好接待安排
+        </p>
+        <a class="btn-wps" id="rsvpCtaBtn" href="#" target="_blank" rel="noopener">
+            填写出席回执 &rarr;
+        </a>
+    </div>
+
+    <div class="fade-in">
+        <p class="form-note" id="formNote">
+            提交后数据自动汇总到腾讯文档<br>感谢您的祝福与到来
+        </p>
+    </div>
+
+    <div class="rsvp-scroll-hint fade-in">
+        <span>向下查看我们的照片</span>
+        <div class="arrow"></div>
+    </div>
+</section>
+
+<!-- ==================== 第3屏：寄语 ==================== -->
+<section id="sec-message" class="section">
+    <div class="msg-content fade-in">
+        <p class="section-label" style="text-align:center;">The Couple</p>
+        <h2 class="section-title" style="text-align:center;">新 人</h2>
+        <div class="divider"></div>
+        <p class="love-story" id="loveStory">
+            从相识到相知，从相知到相爱<br>
+            我们走过了无数个日日夜夜<br>
+            如今，我们诚挚地邀请您<br>
+            来见证我们人生中最美好的时刻
+        </p>
+    </div>
+</section>
+
+<!-- ==================== 第4屏：相册（三章节） ==================== -->
+<section id="sec-gallery" class="section">
+    <div style="width:100%; text-align:center;">
+        <div class="fade-in" style="margin-bottom:10px;">
+            <p class="section-label">Our Moments</p>
+            <h2 class="section-title">相 册</h2>
+            <div class="divider"></div>
+        </div>
+        <div class="gallery-wrap fade-in" id="galleryWrap">
+            <!-- JS 动态填充 -->
+        </div>
+    </div>
+</section>
+
+<!-- ==================== 第5屏：结语（含详情卡片） ==================== -->
+<section id="sec-ending" class="section">
+    <div class="ending-bg" id="endingBg"></div>
+    <div class="ending-overlay"></div>
+
+    <!-- 毛玻璃详情卡片 -->
+    <div class="venue-card fade-in">
+        <h2 class="card-title">答 谢 宴 详 情</h2>
+        <div class="info-row">
+            <span class="info-label">Date</span>
+            <span class="info-value" id="card-date">6月26日</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Time</span>
+            <span class="info-value" id="card-time">待定</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Addr</span>
+            <span class="info-value" id="card-addr">长春市公主岭市响水镇</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Host</span>
+            <span class="info-value" id="card-venue">崔记全羊馆</span>
+        </div>
+        <div class="divider-sm"></div>
+    </div>
+
+    <div class="ending-content fade-in">
+        <p class="ending-text">
+            " Love is not about how many days, months, or years<br>
+            you have been together. Love is about how much<br>
+            you love each other every single day. "
+        </p>
+        <div class="ending-names" id="endingNames">张睿 &amp; 赵嘉妮</div>
+        <p class="ending-date" id="endingDate">6月26日</p>
+    </div>
+</section>
+
+<!-- 图片弹窗 -->
+<div class="modal-overlay" id="imgModal" onclick="closeModal()">
+    <img class="modal-img" id="modalImg" src="" alt="Preview">
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- 背景音乐 -->
+<audio id="bgMusic" loop>
+    <source src="music/sparks-fly.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 配置 -->
+<script src="settings.js"></script>
+
+<script>
+(function() {
+    'use strict';
+
+    /* ========== 配置读取 ========== */
+    var GROOM    = (typeof SETTINGS_GroomName   !== 'undefined') ? SETTINGS_GroomName   : '张睿';
+    var BRIDE    = (typeof SETTINGS_BrideName   !== 'undefined') ? SETTINGS_BrideName   : '赵嘉妮';
+    var DATE     = (typeof SETTINGS_WeddingDate !== 'undefined') ? SETTINGS_WeddingDate : '6月26日';
+    var TIME     = (typeof SETTINGS_WeddingTime !== 'undefined') ? SETTINGS_WeddingTime : '待定';
+    var VENUE    = (typeof SETTINGS_VenueName   !== 'undefined') ? SETTINGS_VenueName   : '崔记全羊馆';
+    var VDETAIL  = (typeof SETTINGS_VenueDetail !== 'undefined') ? SETTINGS_VenueDetail : '';
+    var BGM      = (typeof SETTINGS_BGM         !== 'undefined') ? SETTINGS_BGM         : '';
+    var WPS_URL  = (typeof SETTINGS_WPSFormURL  !== 'undefined') ? SETTINGS_WPSFormURL  : '';
+    var FORM_EMBED_URL = (typeof SETTINGS_FormEmbedURL !== 'undefined') ? SETTINGS_FormEmbedURL : '';
+    var PHOTOS   = (typeof SETTINGS_Photos      !== 'undefined') ? SETTINGS_Photos      : [];
+    var SHARE_TITLE = (typeof SETTINGS_ShareTitle   !== 'undefined') ? SETTINGS_ShareTitle   : (GROOM + ' & ' + BRIDE + ' · 答谢宴邀请函');
+    var SHARE_COVER = (typeof SETTINGS_ShareCoverImg !== 'undefined') ? SETTINGS_ShareCoverImg : 1;
+
+    /* ========== 动态填充页面 ========== */
+
+    // 封面名字
+    document.getElementById('coverGroom').textContent = GROOM;
+    document.getElementById('coverBride').textContent = BRIDE;
+
+    // 寄语（未做模板变量，保持原文）
+    // 如需动态可自行修改 innerHTML
+
+    // RSVP：嵌入式表单优先，WPS 兜底
+    var embedEl   = document.getElementById('rsvpEmbed');
+    var fallbackEl = document.getElementById('rsvpFallback');
+    var iframeEl  = document.getElementById('rsvpIframe');
+    var noteEl    = document.getElementById('formNote');
+
+    if (FORM_EMBED_URL) {
+        // 模式A：嵌入式腾讯文档收集表
+        if (embedEl) embedEl.style.display = 'block';
+        if (iframeEl) iframeEl.src = FORM_EMBED_URL;
+        if (noteEl) noteEl.innerHTML = '请在上方直接填写出席信息<br>提交后数据自动汇总到腾讯文档';
+    } else {
+        // 模式B：WPS 跳转按钮兜底
+        if (fallbackEl) fallbackEl.style.display = 'block';
+        var cta = document.getElementById('rsvpCtaBtn');
+        if (cta && WPS_URL) cta.href = WPS_URL;
+        if (noteEl) noteEl.innerHTML = '提交后将通过短信与您确认<br>感谢您的祝福与到来';
+    }
+
+    // 结语卡片
+    document.getElementById('card-date').textContent  = DATE;
+    document.getElementById('card-time').textContent  = TIME;
+    document.getElementById('card-addr').textContent  = VDETAIL || VENUE;
+    document.getElementById('card-venue').textContent = VENUE;
+    document.getElementById('endingNames').textContent = GROOM + ' & ' + BRIDE;
+    document.getElementById('endingDate').textContent  = DATE;
+
+    // 结语背景图（用最后一张：DSCF4683）
+    var endingBg = document.getElementById('endingBg');
+    var endingImgPath = (PHOTOS.length >= 9) ? PHOTOS[8] : (PHOTOS.length ? PHOTOS[PHOTOS.length-1] : 'images/4H9A6090.jpg');
+    endingBg.innerHTML = '<img src="' + endingImgPath + '" alt="" style="width:100%;height:100%;object-fit:cover;filter:grayscale(60%) brightness(0.5);">';
+
+    /* ========== 相册三章节排版 ========== */
+    var galleryWrap = document.getElementById('galleryWrap');
+    if (galleryWrap && PHOTOS.length >= 8) {
+
+        // 章节标签模板
+        function chapterLabelHTML(cn, en) {
+            return '<div class="chapter-label">'
+                 + '<div class="line"></div>'
+                 + '<span class="cn">' + cn + '</span>'
+                 + '<span class="en">' + en + '</span>'
+                 + '<div class="line"></div>'
+                 + '</div>';
+        }
+
+        // 图片来源（点击放大）
+        function imgWrapHTML(src, cls) {
+            var extra = cls ? ' ' + cls : '';
+            return '<div class="gallery-img-wrap' + extra + '" onclick="openModal(\'' + src + '\')">'
+                 + '<img src="' + src + '" alt="" loading="lazy">'
+                 + '</div>';
+        }
+
+        // 全幅图
+        function fullHTML(src) {
+            return '<div class="gallery-full" onclick="openModal(\'' + src + '\')">'
+                 + '<img src="' + src + '" alt="" loading="lazy">'
+                 + '</div>';
+        }
+
+        var html = '';
+
+        // ---- 第一章：初见 (photos 0-3) ----
+        html += '<div class="gallery-chapter fade-in">';
+        html += chapterLabelHTML('初 见', 'First Sight');
+        html += fullHTML(PHOTOS[0]);
+        html += '<div class="gallery-duo">';
+        html += imgWrapHTML(PHOTOS[1]);
+        html += imgWrapHTML(PHOTOS[2]);
+        html += '</div>';
+        html += fullHTML(PHOTOS[3]);
+        html += '</div>';
+
+        // ---- 第二章：相守 (photos 4-6 + 诗句) ----
+        html += '<div class="gallery-chapter fade-in">';
+        html += chapterLabelHTML('相 守', 'Together');
+        html += '<div class="gallery-interlude"><p class="poem">愿我如星君如月<br>夜夜流光相皎洁</p></div>';
+        html += fullHTML(PHOTOS[4]);
+        html += '<div class="gallery-duo-reverse">';
+        html += imgWrapHTML(PHOTOS[5]);
+        html += imgWrapHTML(PHOTOS[6]);
+        html += '</div>';
+        html += '</div>';
+
+        // ---- 第三章：欢庆 (photo 7) ----
+        html += '<div class="gallery-chapter fade-in">';
+        html += chapterLabelHTML('欢 庆', 'Celebration');
+        html += fullHTML(PHOTOS[7]);
+        html += '</div>';
+
+        galleryWrap.innerHTML = html;
+    }
+
+    /* ========== 背景音乐 ========== */
+    var audio = document.getElementById('bgMusic');
+    if (audio && BGM) {
+        var srcEl = audio.querySelector('source');
+        if (!srcEl) {
+            srcEl = document.createElement('source');
+            srcEl.type = 'audio/mpeg';
+            audio.appendChild(srcEl);
+        }
+        srcEl.src = BGM;
+        audio.load();
+    }
+
+    var musicBtn = document.getElementById('music-btn');
+    var bgMusic  = document.getElementById('bgMusic');
+    var isPlaying = true;
+
+    function tryPlayMusic() {
+        if (!bgMusic || !BGM) return;
+        bgMusic.volume = 0.4;
+        var p = bgMusic.play();
+        if (p !== undefined) {
+            p.catch(function() {
+                isPlaying = false;
+                if (musicBtn) musicBtn.classList.remove('playing');
+            });
+        }
+    }
+
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            document.getElementById('loader').classList.add('hidden');
+            tryPlayMusic();
+        }, 1500);
+    });
+
+    document.addEventListener('click', function initMusic() {
+        if (!isPlaying) { tryPlayMusic(); isPlaying = true; if (musicBtn) musicBtn.classList.add('playing'); }
+        document.removeEventListener('click', initMusic);
+    }, { once: true });
+
+    if (musicBtn) {
+        musicBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isPlaying) { if (bgMusic) bgMusic.pause(); musicBtn.classList.remove('playing'); }
+            else { if (bgMusic) bgMusic.play(); musicBtn.classList.add('playing'); }
+            isPlaying = !isPlaying;
+        });
+    }
+
+    /* ========== 微信 JS-SDK 卡片分享 ========== */
+    function getShareImageUrl() {
+        var idx = Math.max(0, Math.min(SHARE_COVER - 1, PHOTOS.length - 1));
+        var imgPath = (PHOTOS.length && PHOTOS[idx]) ? PHOTOS[idx] : 'images/4H9A6090.jpg';
+        if (/^https?:\/\//.test(imgPath)) return imgPath;
+        var base = window.location.origin + window.location.pathname.replace(/[^\/]*$/, '');
+        return base + imgPath;
+    }
+
+    function setupWechatShare() {
+        if (typeof wx === 'undefined') return;
+
+        var shareTitle = SHARE_TITLE;
+        var shareDesc  = '人生旅途，幸有你同行。诚邀您参加我们的答谢宴。';
+        var shareLink  = window.location.href;
+        var shareImg   = getShareImageUrl();
+
+        // 更新 OG 标签（兜底）
+        var ogT = document.querySelector('meta[property="og:title"]');
+        var ogD = document.querySelector('meta[property="og:description"]');
+        var ogI = document.querySelector('meta[property="og:image"]');
+        var ogU = document.querySelector('meta[property="og:url"]');
+        if (ogT) ogT.setAttribute('content', shareTitle);
+        if (ogD) ogD.setAttribute('content', shareDesc);
+        if (ogI) ogI.setAttribute('content', shareImg);
+        if (ogU) ogU.setAttribute('content', shareLink);
+        document.title = shareTitle;
+
+        var shareData = {
+            title: shareTitle,
+            desc: shareDesc,
+            link: shareLink,
+            imgUrl: shareImg,
+            type: 'link',
+            dataUrl: ''
+        };
+
+        wx.ready(function() {
+            try { wx.updateAppMessageShareData(shareData); } catch(e) {}
+            try { wx.updateTimelineShareData({ title: shareData.title, link: shareData.link, imgUrl: shareData.imgUrl }); } catch(e) {}
+            try { wx.onMenuShareAppMessage(shareData); } catch(e) {}
+            try { wx.onMenuShareTimeline({ title: shareData.title, link: shareData.link, imgUrl: shareData.imgUrl }); } catch(e) {}
+        });
+
+        wx.error(function(err) { /* 静默降级，OG 兜底 */ });
+    }
+
+    if (typeof wx !== 'undefined') {
+        setupWechatShare();
+    } else {
+        var checkWx = setInterval(function() {
+            if (typeof wx !== 'undefined') { clearInterval(checkWx); setupWechatShare(); }
+        }, 200);
+        setTimeout(function() { clearInterval(checkWx); }, 5000);
+    }
+
+    /* ========== 滚动淡入动画 ========== */
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+
+    /* ========== 导航圆点 ========== */
+    var navDots  = document.querySelectorAll('.nav-dot');
+    var sections = document.querySelectorAll('.section');
+    navDots.forEach(function(dot) {
+        dot.addEventListener('click', function() {
+            var idx = parseInt(dot.getAttribute('data-target'));
+            if (sections[idx]) sections[idx].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+    var secObs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+            if (e.isIntersecting) {
+                navDots.forEach(function(d) { d.classList.remove('active'); });
+                var idx = Array.from(sections).indexOf(e.target);
+                if (navDots[idx]) navDots[idx].classList.add('active');
+            }
+        });
+    }, { threshold: 0.5 });
+    sections.forEach(function(s) { secObs.observe(s); });
+
+    /* ========== 图片弹窗 ========== */
+    window.openModal = function(src) {
+        document.getElementById('modalImg').src = src;
+        document.getElementById('imgModal').classList.add('active');
+    };
+    window.closeModal = function() {
+        document.getElementById('imgModal').classList.remove('active');
+    };
+
+})();
+</script>
+</body>
+</html>
