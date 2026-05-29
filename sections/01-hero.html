@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 375px; min-height: 667px;
+  font-family: "PingFang SC","Microsoft YaHei",sans-serif;
+  background: linear-gradient(135deg, #6b0f1a 0%, #8B0000 30%, #C41E3A 65%, #DC143C 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 48px 28px;
+  overflow: hidden; position: relative;
+}
+body::before {
+  content: ''; position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 40%, rgba(212,168,83,0.10) 0%, transparent 65%);
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-english {
+  font-size: 14px; letter-spacing: 10px;
+  color: rgba(255,255,255,0.45); margin-bottom: 40px; font-weight: 300;
+}
+.hero-date-circle {
+  width: 130px; height: 130px;
+  border: 1px solid rgba(212,168,83,0.35); border-radius: 50%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  margin: 0 auto 32px; position: relative;
+}
+.hero-date-circle::after {
+  content: ''; position: absolute; inset: -8px;
+  border: 1px solid rgba(212,168,83,0.15); border-radius: 50%;
+}
+.hero-date-day {
+  font-size: 48px; font-weight: 100;
+  color: #D4A853; line-height: 1; letter-spacing: 2px;
+}
+.hero-date-month {
+  font-size: 16px; color: rgba(255,255,255,0.65);
+  letter-spacing: 5px; margin-top: 6px;
+}
+.hero-couple {
+  font-size: 34px; font-weight: 300;
+  color: #fff; letter-spacing: 10px; margin-bottom: 10px;
+}
+.hero-ampersand {
+  display: inline-block; color: #D4A853;
+  font-size: 26px; margin: 0 6px; font-style: italic; font-weight: 100;
+}
+.hero-subtitle {
+  font-size: 17px; color: rgba(255,255,255,0.65);
+  letter-spacing: 8px; font-weight: 300;
+}
+</style>
+</head>
+<body>
+<div class="hero-content">
+  <div class="hero-english">诚 邀 莅 临</div>
+  <div class="hero-date-circle">
+    <span class="hero-date-day">26</span>
+    <span class="hero-date-month">6月26日 &middot; 星期五</span>
+  </div>
+  <div class="hero-couple">
+    张睿 <span class="hero-ampersand">&amp;</span> 赵嘉妮
+  </div>
+  <div class="hero-subtitle">婚 礼 答 谢 宴</div>
+</div>
+</body>
+</html>

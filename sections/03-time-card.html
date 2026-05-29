@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  width: 375px;
+  font-family: "PingFang SC","Microsoft YaHei",sans-serif;
+  background: linear-gradient(160deg, #6b0f1a 0%, #8B0000 35%, #C41E3A 100%);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  padding: 48px 24px;
+}
+.card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(212,168,83,0.2);
+  border-radius: 6px; padding: 26px 22px;
+  width: 100%; max-width: 327px;
+}
+.card-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(212,168,83,0.15);
+}
+.icon { font-size: 26px; line-height: 1; }
+.label { font-size: 17px; letter-spacing: 5px; color: #D4A853; font-weight: 400; }
+.label-en { display: block; font-family: Georgia,serif; font-size: 10px; letter-spacing: 2px; color: rgba(212,168,83,0.5); margin-top: 3px; }
+.content { font-size: 16px; line-height: 2; color: rgba(255,255,255,0.88); }
+.content .big { font-size: 21px; color: #fff; font-weight: 500; display: block; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-header">
+    <span class="icon">&#x1F4C5;</span>
+    <div><span class="label">时 间</span><span class="label-en">Time</span></div>
+  </div>
+  <div class="content">
+    <span class="big">2026年6月26日</span>
+    <span>星期五 &middot; 农历五月十二</span>
+  </div>
+</div>
+</body>
+</html>
